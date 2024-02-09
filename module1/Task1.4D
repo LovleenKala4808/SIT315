@@ -1,0 +1,76 @@
+#include <IRremote.h>
+
+const int PIR = 2;
+const int RED_LED = 8;
+const int GREEN_LED = 7;
+const int RECV_PIN = 3;
+const int BLUE_LED = PB5;
+
+const uint16_t timer = 0; // counter +
+const uint16_t compare = 31250; // compare thresholds 
+
+int red_state = LOW;
+int green_state = LOW;
+int blue_state = LOW;
+
+IRrecv irrecv(RECV_PIN);
+decode_results results;
+
+void setup() 
+{
+  // LEDs
+  pinMode(RED_LED, OUTPUT);
+  pinMode(GREEN_LED, OUTPUT);
+
+  // PIR + IR sensors
+  pinMode(PIR, INPUT);
+  irrecv.enableIRIn();
+
+  attachInterrupt(digitalPinToInterrupt(PIR), PIR_trigger, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(RECV_PIN), IR_trigger, CHANGE);
+  Serial.begin(9600);
+  
+
+  DDRB |= (1 << BLUE_LED);
+  TCCR1A = 0;
+  TCCR1B |= (1 << CS12);
+  TCCR1B &= ~(1 << CS11);
+  TCCR1B &= ~(1 << CS10);
+  TCNT1 = timer;
+  OCR1A = compare;
+  TIMSK1 = (1 << OCIE1A);
+  // Enable interrupts
+  sei();
+}
+
+void loop()
+{
+  digitalWrite(RED_LED, red_state); 
+  digitalWrite(GREEN_LED, green_state); 
+}
+
+void PIR_trigger()
+{
+  red_state = !red_state;
+  Serial.println("PIR Interrupt.");
+}
+
+void IR_trigger()
+{
+  if (irrecv.decode(&results)) 
+  {
+    Serial.println(results.value, DEC);
+    if (results.value == 16580863)
+    {
+      green_state = !green_state; 
+      Serial.println("IR Interrupt.");
+    }
+  irrecv.resume();
+  }
+}
+
+ISR(TIMER1_COMPA_vect) {
+  TCNT1 = timer;
+  PORTB ^= (1 << BLUE_LED);
+  Serial.println("Timer Interrupt.");
+}

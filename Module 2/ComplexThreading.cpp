@@ -1,5 +1,5 @@
 /* ComplexThreading.cpp
- * Om Tomar
+ * Lovleen Kala
  * 25/02/2023
  * 
  * This program generates a random array of LENGTH and sorts it seqentualy and in parallel

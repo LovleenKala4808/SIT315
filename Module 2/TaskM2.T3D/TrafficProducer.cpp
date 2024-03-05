@@ -1,9 +1,10 @@
 /* TrafficProducer.cpp
- * Om Tomar
- * 04 March 2023
+ * Author: Lovleen Kala
+ * Date: 04 March 2023
  * 
- * This file is designed to be run by a scheduler to log traffic information to the log.txt file 
- * 
+ * Description:
+ * This file is designed to be run by a scheduler to log traffic information to the log.txt file.
+ * It simulates traffic data for a set number of traffic lights and logs the information in a structured format.
  */
 
 #include <iostream>
@@ -14,7 +15,7 @@
 
 using namespace std;
 
-#define NUM_LIGHTS 12       //number of traffic lights
+#define NUM_LIGHTS 12       // Number of simulated traffic lights
 
 int main(){
 
@@ -27,13 +28,13 @@ int main(){
 
     for (int i = 1 ; i <= NUM_LIGHTS ; i++){
         
-        output += to_string(rawTime) + " ";
-        output+= to_string(i) + " ";
+        output += to_string(rawTime) + " "; // Timestamp
+        output+= to_string(i) + " ";        // Traffic light number
         int cars = rand() % ((10 - 1) + 1) + 1;
-        output+= to_string(cars) + " \n";                   //log entry std::stamp ; light no. ; number of cars (random)
+        output+= to_string(cars) + " \n";   // Number of cars (random) for this timestamp and light
     }
 
-    fstream log("log.txt", ios::app);                       //append to log file
+    fstream log("log.txt", ios::app);                       // Append to the log file
     if(!log.is_open()){
         cout<<"Error: Log file not found"<<endl;
     } else {
